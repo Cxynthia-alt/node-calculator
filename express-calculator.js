@@ -1,28 +1,50 @@
 const express = require('express');
 const ExpressError = require('./expressError')
+const calculatorMethods = require('./calculatorMethods')
 
 const app = express();
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 
-debugger
-app.get('/mean', (req, res, next) => {
+
+
+app.get('/', (req, res, next) => {
   try {
     if (Object.keys(req.query).length === 0) {
       throw new ExpressError("Nums are required", 404)
     }
-    let { nums } = req.query
+    let { nums, operation } = req.query
     nums = nums.split(',').map(a => +a)
     const isNumValid = nums.every(a => Number.isNaN(a) === false)
     if (!isNumValid) {
       throw new ExpressError("invalid number", 404)
     }
-    const value = nums.reduce((a, b) => a + b) / nums.length
+
+    // instantiate calculatorMethodss
+    let newInstance = new calculatorMethods(nums)
+    let mean = newInstance.mean()
+    let median = newInstance.median()
+    let mode = newInstance.mode()
+
     const response = {
-      "operation": "mean"
+      "operation": operation
     }
-    response["value"] = value
+    if (operation === "all") {
+      response["mean"] = mean
+      response["median"] = median
+      response["mode"] = mode
+    }
+    if (operation === "mean") {
+      response["value"] = mean
+    }
+    if (operation === "median") {
+      response["value"] = median
+    }
+    else {
+      response["value"] = maxItem
+    }
+
     return res.json(response)
   } catch (e) {
     next(e)
@@ -31,9 +53,6 @@ app.get('/mean', (req, res, next) => {
 
 })
 
-app.post('/register', (req, res) => {
-  res.send(req.body)
-})
 
 app.use((req, res, next) => {
   const e = new ExpressError("Page Not Found", 404)
@@ -43,7 +62,6 @@ app.use((req, res, next) => {
 app.use((error, req, res, next) => {
   let status = error.status || 500
   let msg = error.msg
-
   return res.status(error.status).json({
     error: { msg, status }
   })
