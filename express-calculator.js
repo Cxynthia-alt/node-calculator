@@ -41,7 +41,7 @@ app.get('/', (req, res, next) => {
     if (operation === "median") {
       response["value"] = median
     }
-    else {
+    else if (operation === "mode") {
       response["value"] = maxItem
     }
 
@@ -62,7 +62,7 @@ app.use((req, res, next) => {
 app.use((error, req, res, next) => {
   let status = error.status || 500
   let msg = error.msg
-  return res.status(error.status).json({
+  return res.status(status).json({
     error: { msg, status }
   })
 })

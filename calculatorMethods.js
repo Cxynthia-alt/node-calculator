@@ -4,20 +4,20 @@ class calculatorMethods {
   }
 
   mean() {
-    return nums.reduce((a, b) => a + b) / nums.length
+    return this.nums.reduce((a, b) => a + b) / this.nums.length
   }
 
   median() {
-    nums = nums.sort((a, b) => a - b)
-    const mid = Math.floor(nums.length / 2)
-    return nums.length % 2 !== 0 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2
+    this.nums = this.nums.sort((a, b) => a - b)
+    const mid = Math.floor(this.nums.length / 2)
+    return this.nums.length % 2 !== 0 ? this.nums[mid] : (this.nums[mid - 1] + this.nums[mid]) / 2
   }
 
   mode() {
     let modeMap = {}
-    let maxItem = nums[0], count = 1;
-    for (let i = 0; i < nums.length; i++) {
-      let item = nums[i]
+    let maxItem = this.nums[0], count = 1;
+    for (let i = 0; i < this.nums.length; i++) {
+      let item = this.nums[i]
       if (!modeMap[item]) {
         modeMap[item] = 1
       } else {
